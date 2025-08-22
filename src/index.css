@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,9 +8,10 @@
   line-height: 1.5;
   font-weight: 400;
 
+  /* Usar tema claro por defecto para que las clases Tailwind rendericen correctamente */
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #213547;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,16 +24,23 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* No usar flex en body: permite que el contenido ocupe todo el ancho y evita barras vacías */
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
+}
+
+/* Evitar scroll horizontal accidental */
+html,
+body {
+  overflow-x: hidden;
 }
 
 h1 {
@@ -48,27 +55,126 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #f9f9f9;
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /* Ajustes para modo oscuro */
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
-    background-color: #f9f9f9;
+    background-color: #1a1a1a;
+  }
+
+  /* Header específico: fondo translúcido y texto legible */
+  .sticky.top-0.z-10 {
+    background-color: rgba(11, 18, 32, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .sticky.top-0.z-10 .text-xl {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .sticky.top-0.z-10 .text-xs {
+    color: #cbd5e1 !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+}
+
+/* Dark-mode overrides for common Tailwind utilities to improve contrast */
+@media (prefers-color-scheme: dark) {
+  .bg-white {
+    background-color: #0b1220 !important;
+  }
+
+  .bg-gray-50 {
+    background-color: #071023 !important;
+  }
+
+  .bg-gray-100 {
+    background-color: #0f1724 !important;
+  }
+
+  .text-gray-600 {
+    color: #cbd5e1 !important;
+  }
+
+  .text-gray-500 {
+    color: #94a3b8 !important;
+  }
+
+  .text-gray-400 {
+    color: #94a3b8 !important;
+  }
+
+  .text-gray-300 {
+    color: #9fb0c7 !important;
+  }
+
+  .border {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .shadow-sm {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .shadow-xl {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  /* Hacer más visibles los botones de acción en dark: WhatsApp (verde) y Email (índigo) */
+  .bg-green-600 {
+    background-color: #10b981 !important;
+    /* verde más brillante */
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12) !important;
+  }
+
+  .bg-green-700 {
+    background-color: #059669 !important;
+    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.12) !important;
+  }
+
+  .bg-indigo-600 {
+    background-color: #6366f1 !important;
+    /* índigo más brillante */
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12) !important;
+  }
+
+  .bg-indigo-700 {
+    background-color: #4f46e5 !important;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.12) !important;
+  }
+
+  .bg-green-600:hover,
+  .bg-green-700:hover,
+  .bg-indigo-600:hover,
+  .bg-indigo-700:hover {
+    filter: brightness(1.06);
+  }
+
+  /* Asegurar contraste del texto dentro de esos botones */
+  .text-white {
+    color: #ffffff !important;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
   }
 }

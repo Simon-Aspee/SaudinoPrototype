@@ -103,17 +103,18 @@ function loadLS(key, fallback) {
 function saveLS(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch {}
+  } catch { }
 }
 
 // ---------- Componentes ----------
+
+
 function Header({ storeName, onAdminToggle, adminActive, onOpenCart, cartCount }) {
   return (
     <div className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xl font-bold">{storeName}</span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 border text-gray-600">sin backend</span>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -635,7 +636,7 @@ export default function App() {
             }
           }
         }
-      } catch {}
+      } catch { }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -716,6 +717,11 @@ export default function App() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         {!adminUnlocked ? (
           <>
+            {/* Logo central en la página principal (desde public/saudinologo.png) */}
+            <div className="flex justify-center mb-6">
+              <img src="/saudinologo.png" alt="Saudino" className="h-28 sm:h-36 object-contain" />
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-6">
               <input
                 placeholder="Buscar productos..."
