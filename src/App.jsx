@@ -140,12 +140,29 @@ function Header({ storeName, onAdminToggle, adminActive, onOpenCart, cartCount }
 function ProductCard({ product, onAdd }) {
   const [size, setSize] = useState(product.sizes?.[0] || "");
   const [qty, setQty] = useState(1);
+  const [imgOpen, setImgOpen] = useState(false);
 
   return (
     <div className="border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition bg-white">
       <div className="aspect-[4/3] bg-gray-100">
         {product.imageUrl ? (
-          <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover" />
+          <>
+            <img
+              src={product.imageUrl}
+              alt={product.title}
+              className="w-full h-full object-cover cursor-zoom-in"
+              onClick={() => setImgOpen(true)}
+            />
+            {imgOpen ? (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-black/70" onClick={() => setImgOpen(false)} />
+                <div className="relative max-w-4xl w-full max-h-[90vh]">
+                  <img src={product.imageUrl} alt="preview large" className="w-full h-full object-contain rounded-lg" />
+                  <button className="absolute top-2 right-2 px-3 py-1 rounded-lg bg-white/20 text-white" onClick={() => setImgOpen(false)}>Cerrar</button>
+                </div>
+              </div>
+            ) : null}
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">Sin imagen</div>
         )}
@@ -199,6 +216,7 @@ function ProductCard({ product, onAdd }) {
 }
 
 function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, totals, settings }) {
+  const [previewImage, setPreviewImage] = useState(null);
   if (!open) return null;
 
   const msg = useMemo(() => {
@@ -230,6 +248,7 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
           <h2 className="font-semibold">Carrito</h2>
           <button className="text-sm text-gray-600 hover:text-black" onClick={onClose}>Cerrar</button>
         </div>
+
         <div className="p-4 flex-1 overflow-auto">
           {items.length === 0 ? (
             <div className="text-sm text-gray-500">Tu carrito está vacío.</div>
@@ -239,7 +258,7 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
                 <div key={it.key} className="flex gap-3 border rounded-xl p-3">
                   <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
                     {it.imageUrl ? (
-                      <img src={it.imageUrl} alt="" className="w-full h-full object-cover" />
+                      <img src={it.imageUrl} alt="" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setPreviewImage(it.imageUrl)} />
                     ) : null}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -255,9 +274,7 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
                         className="w-20 border rounded-lg px-2 py-1 text-sm text-center"
                       />
                       <button className="px-2 py-1 rounded-lg border" onClick={() => onUpdateQty(it.key, Number(it.qty || 1) + 1)}>+</button>
-                      <button className="ml-auto text-sm text-red-600 hover:underline" onClick={() => onRemove(it.key)}>
-                        Quitar
-                      </button>
+                      <button className="ml-auto text-sm text-red-600 hover:underline" onClick={() => onRemove(it.key)}>Quitar</button>
                     </div>
                   </div>
                 </div>
@@ -265,6 +282,7 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
             </div>
           )}
         </div>
+
         <div className="p-4 border-t space-y-3">
           <div className="flex items-center justify-between text-sm">
             <span>Subtotal</span>
@@ -278,6 +296,7 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
             <span>Total</span>
             <span>{priceFmt(totals.total, settings.currency)}</span>
           </div>
+
           <div className="grid grid-cols-2 gap-2 pt-2">
             <a
               href={wa || "#"}
@@ -285,31 +304,40 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
               rel="noreferrer"
               className={`text-center px-3 py-2 rounded-lg text-white ${wa ? "bg-green-600 hover:bg-green-700" : "bg-gray-300 cursor-not-allowed"}`}
               onClick={(e) => { if (!wa) e.preventDefault(); }}
-            >
-              WhatsApp
-            </a>
+            >WhatsApp</a>
             <a
               href={mail || "#"}
               className={`text-center px-3 py-2 rounded-lg text-white ${mail ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-300 cursor-not-allowed"}`}
               onClick={(e) => { if (!mail) e.preventDefault(); }}
-            >
-              Email
-            </a>
+            >Email</a>
           </div>
+
           <button className="w-full text-sm text-gray-600 hover:text-black underline" onClick={onClear}>Vaciar carrito</button>
         </div>
       </div>
+
+      {previewImage ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70" onClick={() => setPreviewImage(null)} />
+          <div className="relative max-w-4xl w-full max-h-[90vh]">
+            <img src={previewImage} alt="preview large" className="w-full h-full object-contain rounded-lg" />
+            <button className="absolute top-2 right-2 px-3 py-1 rounded-lg bg-white/20 text-white" onClick={() => setPreviewImage(null)}>Cerrar</button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
 
 function AdminGate({ open, onClose, onUnlock }) {
   const [pin, setPin] = useState("");
+
   if (!open) return null;
+
   return (
-    <div className="fixed inset-0 z-40">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="absolute inset-0 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+      <div className="relative w-full max-w-sm">
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-5">
           <h3 className="font-semibold text-lg">Entrar como dueño</h3>
           <p className="text-sm text-gray-600 mt-1">Ingresa tu PIN para abrir el panel del dueño.</p>
@@ -335,6 +363,7 @@ function AdminGate({ open, onClose, onUnlock }) {
 function ImagePicker({ value, onChange }) {
   const fileRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <div className="space-y-2">
       {value ? (
@@ -347,6 +376,7 @@ function ImagePicker({ value, onChange }) {
               onClick={() => setModalOpen(true)}
             />
           </div>
+
           {modalOpen ? (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
               <div className="absolute inset-0 bg-black/70" onClick={() => setModalOpen(false)} />
@@ -360,6 +390,7 @@ function ImagePicker({ value, onChange }) {
       ) : (
         <div className="aspect-[4/3] bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">Sin imagen</div>
       )}
+
       <div className="flex gap-2">
         <input
           type="url"
