@@ -171,16 +171,23 @@ function ProductCard({ product, onAdd }) {
           ) : (
             <span className="text-xs text-gray-500">Sin tallas</span>
           )}
-          <input
-            type="number"
-            min={1}
-            value={qty}
-            onChange={(e) => setQty(Math.max(1, Number(e.target.value || 1)))}
-            className="w-16 border rounded-lg px-2 py-1 text-sm"
-          />
+          <div className="flex items-center gap-2">
+            <button className="px-2 py-1 rounded-lg border" onClick={() => setQty(Math.max(1, qty - 1))}>-</button>
+            <input
+              type="number"
+              min={1}
+              value={qty}
+              onChange={(e) => {
+                const v = e.target.value === "" ? "" : Number(e.target.value || 1);
+                setQty(v === "" ? "" : Math.max(1, v));
+              }}
+              className="w-20 border rounded-lg px-2 py-1 text-sm text-center"
+            />
+            <button className="px-2 py-1 rounded-lg border" onClick={() => setQty(Number(qty || 1) + 1)}>+</button>
+          </div>
           <button
             className="ml-auto px-3 py-1.5 rounded-lg bg-black text-white text-sm hover:opacity-90"
-            onClick={() => onAdd(product, size, qty)}
+            onClick={() => onAdd(product, size, Number(qty || 1))}
             disabled={!product.available}
           >
             {product.available ? "Agregar" : "No disponible"}
@@ -239,13 +246,15 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
                     <div className="font-medium truncate">{it.title}</div>
                     <div className="text-xs text-gray-500">{it.size ? `Talla ${it.size} · ` : ""}{priceFmt(it.price, settings.currency)}</div>
                     <div className="flex items-center gap-2 mt-2">
+                      <button className="px-2 py-1 rounded-lg border" onClick={() => onUpdateQty(it.key, Math.max(1, it.qty - 1))}>-</button>
                       <input
                         type="number"
                         min={1}
                         value={it.qty}
-                        onChange={(e) => onUpdateQty(it.key, Math.max(1, Number(e.target.value || 1)))}
-                        className="w-20 border rounded-lg px-2 py-1 text-sm"
+                        onChange={(e) => onUpdateQty(it.key, e.target.value === "" ? "" : Math.max(1, Number(e.target.value || 1)))}
+                        className="w-20 border rounded-lg px-2 py-1 text-sm text-center"
                       />
+                      <button className="px-2 py-1 rounded-lg border" onClick={() => onUpdateQty(it.key, Number(it.qty || 1) + 1)}>+</button>
                       <button className="ml-auto text-sm text-red-600 hover:underline" onClick={() => onRemove(it.key)}>
                         Quitar
                       </button>
@@ -325,12 +334,29 @@ function AdminGate({ open, onClose, onUnlock }) {
 
 function ImagePicker({ value, onChange }) {
   const fileRef = useRef(null);
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <div className="space-y-2">
       {value ? (
-        <div className="aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden">
-          <img src={value} alt="preview" className="w-full h-full object-cover" />
-        </div>
+        <>
+          <div className="aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden">
+            <img
+              src={value}
+              alt="preview"
+              className="w-full h-full object-cover cursor-zoom-in"
+              onClick={() => setModalOpen(true)}
+            />
+          </div>
+          {modalOpen ? (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/70" onClick={() => setModalOpen(false)} />
+              <div className="relative max-w-4xl w-full max-h-[90vh]">
+                <img src={value} alt="preview large" className="w-full h-full object-contain rounded-lg" />
+                <button className="absolute top-2 right-2 px-3 py-1 rounded-lg bg-white/20 text-white" onClick={() => setModalOpen(false)}>Cerrar</button>
+              </div>
+            </div>
+          ) : null}
+        </>
       ) : (
         <div className="aspect-[4/3] bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">Sin imagen</div>
       )}
@@ -586,6 +612,7 @@ function AdminPanel({ catalog, setCatalog, settings, setSettings }) {
 
 function ProductForm({ initial, onSave, onCancel }) {
   const [form, setForm] = useState(initial);
+  const [sizesText, setSizesText] = useState((initial.sizes || []).join(","));
   return (
     <div className="space-y-3">
       <div className="space-y-1">
@@ -605,8 +632,8 @@ function ProductForm({ initial, onSave, onCancel }) {
         <input
           className="w-full border rounded-lg px-3 py-2"
           placeholder="S,M,L,XL / 36,38,40"
-          value={form.sizes?.join(",") || ""}
-          onChange={(e) => setForm({ ...form, sizes: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })}
+          value={sizesText}
+          onChange={(e) => setSizesText(e.target.value)}
         />
       </div>
       <div className="space-y-1">
@@ -631,7 +658,7 @@ function ProductForm({ initial, onSave, onCancel }) {
           <button className="px-3 py-1.5 rounded-lg border text-sm" onClick={onCancel}>Cancelar</button>
           <button
             className="px-3 py-1.5 rounded-lg bg-black text-white text-sm"
-            onClick={() => onSave({ ...form, id: form.id || uid() })}
+            onClick={() => onSave({ ...form, id: form.id || uid(), sizes: sizesText.split(",").map((s) => s.trim()).filter(Boolean) })}
             disabled={!form.title || !form.price}
           >
             Guardar
