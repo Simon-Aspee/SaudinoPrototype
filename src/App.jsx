@@ -431,12 +431,50 @@ function AdminPanel({ catalog, setCatalog, settings, setSettings }) {
     r.readAsText(file);
   }
 
+  // ---- NUEVO: publicar cambios a la Function de Netlify ----
+  async function publicarCambios() {
+    const pass = prompt("Contraseña de publicación (PUBLISH_PASSWORD):");
+    if (!pass) return;
+
+    try {
+      const res = await fetch("/.netlify/functions/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${pass}`,
+        },
+        body: JSON.stringify({
+          settings,
+          products: catalog,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error publicando");
+
+      alert("✅ Cambios publicados. Netlify hará deploy en breve.");
+    } catch (err) {
+      console.error(err);
+      alert("❌ " + err.message);
+    }
+  }
+  // ----------------------------------------------------------
+
   return (
     <div className="border rounded-2xl p-4 bg-white">
       <div className="flex items-center gap-2 border-b pb-2">
         <button className={`px-3 py-1.5 rounded-lg text-sm ${tab === "productos" ? "bg-black text-white" : "border"}`} onClick={() => setTab("productos")}>Productos</button>
         <button className={`px-3 py-1.5 rounded-lg text-sm ${tab === "config" ? "bg-black text-white" : "border"}`} onClick={() => setTab("config")}>Configuración</button>
         <div className="ml-auto flex items-center gap-2">
+          {/* NUEVO botón Publicar */}
+          <button
+            className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm"
+            onClick={publicarCambios}
+            title="Publicar cambios en GitHub (desencadena deploy)"
+          >
+            Publicar
+          </button>
+
           <button className="px-3 py-1.5 rounded-lg border text-sm" onClick={exportJSON}>Exportar JSON</button>
           <label className="px-3 py-1.5 rounded-lg border text-sm cursor-pointer">
             Importar JSON
@@ -544,6 +582,7 @@ function AdminPanel({ catalog, setCatalog, settings, setSettings }) {
     </div>
   );
 }
+
 
 function ProductForm({ initial, onSave, onCancel }) {
   const [form, setForm] = useState(initial);
