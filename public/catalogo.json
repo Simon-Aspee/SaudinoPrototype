@@ -52,23 +52,6 @@
         "básicos",
         "algodón"
       ]
-    },
-    {
-      "id": "1cy6fcs0",
-      "title": "Jeans straight fit",
-      "price": 24990,
-      "description": "Tiro medio, calce recto.",
-      "sizes": [
-        "36",
-        "38",
-        "40",
-        "42"
-      ],
-      "imageUrl": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop",
-      "available": true,
-      "tags": [
-        "jeans"
-      ]
     }
   ]
 }
