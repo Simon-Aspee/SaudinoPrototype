@@ -1,12 +1,24 @@
 {
   "settings": {
-    "storeName": "Decosmeticos",
+    "storeName": "Saudino",
     "currency": "CLP",
-    "whatsapp": "+56975580599",
-    "email": "simonaspee@gmail.com",
+    "whatsapp": "+56971846890",
+    "email": "",
     "ownerPIN": "1234"
   },
   "products": [
+    {
+      "id": "dfbym6f1",
+      "title": "Poleron",
+      "price": 7000,
+      "description": "",
+      "sizes": [
+        "M"
+      ],
+      "imageUrl": "",
+      "available": true,
+      "tags": []
+    },
     {
       "id": "6oiwc2ff",
       "title": "aroma",
@@ -35,22 +47,6 @@
       "tags": [
         "básicos",
         "algodón"
-      ]
-    },
-    {
-      "id": "otddgvbi",
-      "title": "Polerón oversize",
-      "price": 18990,
-      "description": "Grueso, ideal para invierno.",
-      "sizes": [
-        "M",
-        "L",
-        "XL"
-      ],
-      "imageUrl": "https://images.unsplash.com/photo-1548883354-7622d03aca29?q=80&w=1200&auto=format&fit=crop",
-      "available": true,
-      "tags": [
-        "invierno"
       ]
     },
     {
