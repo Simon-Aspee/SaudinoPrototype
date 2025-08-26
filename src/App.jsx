@@ -217,10 +217,6 @@ function ProductCard({ product, onAdd }) {
 }
 
 function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, totals, settings }) {
-  const [previewImage, setPreviewImage] = useState(null);
-  const [shipping, setShipping] = useState(() => loadLS(LS_KEYS.shipping, { name: "", address: "", city: "", phone: "" }));
-  useEffect(() => { saveLS(LS_KEYS.shipping, shipping); }, [shipping]);
-
   if (!open) return null;
 
   const msg = useMemo(() => {
@@ -234,16 +230,15 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
     lines.push(`Total: ${priceFmt(totals.total, settings.currency)}`);
     lines.push("");
     lines.push("Datos de envío:");
-    lines.push(`Nombre: ${shipping.name || ""}`);
-    lines.push(`Dirección: ${shipping.address || ""}`);
-    lines.push(`Comuna/Ciudad: ${shipping.city || ""}`);
-    lines.push(`Teléfono: ${shipping.phone || ""}`);
+    lines.push("Nombre:");
+    lines.push("Dirección:");
+    lines.push("Comuna/Ciudad:");
+    lines.push("Teléfono:");
     return lines.join("\n");
-  }, [items, totals, settings, shipping]);
+  }, [items, totals, settings]);
 
   const wa = settings.whatsapp ? `https://wa.me/${digitsOnly(settings.whatsapp)}?text=${encodeURIComponent(msg)}` : null;
   const mail = settings.email ? `mailto:${settings.email}?subject=${encodeURIComponent("Pedido " + settings.storeName)}&body=${encodeURIComponent(msg)}` : null;
-  const readyToSend = Boolean(shipping.name?.trim() && shipping.phone?.trim() && items.length > 0);
 
   return (
     <div className="fixed inset-0 z-30">
@@ -253,7 +248,6 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
           <h2 className="font-semibold">Carrito</h2>
           <button className="text-sm text-gray-600 hover:text-black" onClick={onClose}>Cerrar</button>
         </div>
-
         <div className="p-4 flex-1 overflow-auto">
           {items.length === 0 ? (
             <div className="text-sm text-gray-500">Tu carrito está vacío.</div>
@@ -263,7 +257,7 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
                 <div key={it.key} className="flex gap-3 border rounded-xl p-3">
                   <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
                     {it.imageUrl ? (
-                      <img src={it.imageUrl} alt="" className="w-full h-full object-cover cursor-zoom-in" onClick={() => setPreviewImage(it.imageUrl)} />
+                      <img src={it.imageUrl} alt="" className="w-full h-full object-cover" />
                     ) : null}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -279,7 +273,9 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
                         className="w-20 border rounded-lg px-2 py-1 text-sm text-center"
                       />
                       <button className="px-2 py-1 rounded-lg border" onClick={() => onUpdateQty(it.key, Number(it.qty || 1) + 1)}>+</button>
-                      <button className="ml-auto text-sm text-red-600 hover:underline" onClick={() => onRemove(it.key)}>Quitar</button>
+                      <button className="ml-auto text-sm text-red-600 hover:underline" onClick={() => onRemove(it.key)}>
+                        Quitar
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -287,59 +283,40 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
             </div>
           )}
         </div>
-
-        {/* Shipping form */}
         <div className="p-4 border-t space-y-3">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Nombre</label>
-            <input className="w-full border rounded-lg px-3 py-2" value={shipping.name} onChange={(e) => setShipping({ ...shipping, name: e.target.value })} />
-            <label className="text-sm font-medium">Dirección</label>
-            <input className="w-full border rounded-lg px-3 py-2" value={shipping.address} onChange={(e) => setShipping({ ...shipping, address: e.target.value })} />
-            <label className="text-sm font-medium">Comuna / Ciudad</label>
-            <input className="w-full border rounded-lg px-3 py-2" value={shipping.city} onChange={(e) => setShipping({ ...shipping, city: e.target.value })} />
-            <label className="text-sm font-medium">Teléfono</label>
-            <input className="w-full border rounded-lg px-3 py-2" value={shipping.phone} onChange={(e) => setShipping({ ...shipping, phone: e.target.value })} />
+          <div className="flex items-center justify-between text-sm">
+            <span>Subtotal</span>
+            <span>{priceFmt(totals.subtotal, settings.currency)}</span>
           </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm">Subtotal: <span className="font-medium">{priceFmt(totals.subtotal, settings.currency)}</span></div>
-              <div className="text-sm">Total: <span className="font-semibold">{priceFmt(totals.total, settings.currency)}</span></div>
-            </div>
-            <div className="flex flex-col gap-2 w-48">
-              <a
-                href={wa || "#"}
-                target="_blank"
-                rel="noreferrer"
-                className={`text-center px-3 py-2 rounded-lg text-white ${wa && readyToSend ? "bg-green-600 hover:bg-green-700" : "bg-gray-300 cursor-not-allowed"}`}
-                onClick={(e) => {
-                  if (!readyToSend) { e.preventDefault(); alert("Por favor completa Nombre y Teléfono antes de enviar el pedido."); return; }
-                  if (!wa) { e.preventDefault(); alert("WhatsApp del negocio no configurado."); }
-                }}
-              >WhatsApp</a>
-              <a
-                href={mail || "#"}
-                className={`text-center px-3 py-2 rounded-lg text-white ${mail && readyToSend ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-300 cursor-not-allowed"}`}
-                onClick={(e) => {
-                  if (!readyToSend) { e.preventDefault(); alert("Por favor completa Nombre y Teléfono antes de enviar el pedido."); return; }
-                  if (!mail) { e.preventDefault(); alert("Email del negocio no configurado."); }
-                }}
-              >Email</a>
-              <button className="text-sm text-gray-600 hover:text-black underline" onClick={onClear}>Vaciar carrito</button>
-            </div>
+          <div className="flex items-center justify-between text-sm">
+            <span>Envío</span>
+            <span>{totals.shipping ? priceFmt(totals.shipping, settings.currency) : "A coordinar"}</span>
           </div>
+          <div className="flex items-center justify-between font-semibold text-lg">
+            <span>Total</span>
+            <span>{priceFmt(totals.total, settings.currency)}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <a
+              href={wa || "#"}
+              target="_blank"
+              rel="noreferrer"
+              className={`text-center px-3 py-2 rounded-lg text-white ${wa ? "bg-green-600 hover:bg-green-700" : "bg-gray-300 cursor-not-allowed"}`}
+              onClick={(e) => { if (!wa) e.preventDefault(); }}
+            >
+              WhatsApp
+            </a>
+            <a
+              href={mail || "#"}
+              className={`text-center px-3 py-2 rounded-lg text-white ${mail ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-300 cursor-not-allowed"}`}
+              onClick={(e) => { if (!mail) e.preventDefault(); }}
+            >
+              Email
+            </a>
+          </div>
+          <button className="w-full text-sm text-gray-600 hover:text-black underline" onClick={onClear}>Vaciar carrito</button>
         </div>
       </div>
-
-      {previewImage ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70" onClick={() => setPreviewImage(null)} />
-          <div className="relative max-w-4xl w-full max-h-[90vh]">
-            <img src={previewImage} alt="preview large" className="w-full h-full object-contain rounded-lg" />
-            <button className="absolute top-2 right-2 px-3 py-1 rounded-lg bg-white/20 text-white" onClick={() => setPreviewImage(null)}>Cerrar</button>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
