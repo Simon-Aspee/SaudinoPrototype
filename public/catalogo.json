@@ -8,30 +8,6 @@
   },
   "products": [
     {
-      "id": "dfbym6f1",
-      "title": "Poleron",
-      "price": 7000,
-      "description": "",
-      "sizes": [
-        "M"
-      ],
-      "imageUrl": "",
-      "available": true,
-      "tags": []
-    },
-    {
-      "id": "6oiwc2ff",
-      "title": "aroma",
-      "price": 5000,
-      "description": "",
-      "sizes": [
-        "XL"
-      ],
-      "imageUrl": "",
-      "available": true,
-      "tags": []
-    },
-    {
       "id": "uhs95ulg",
       "title": "Polera básica unisex",
       "price": 7990,
