@@ -229,6 +229,8 @@ function CartPanel({ open, onClose, items, onUpdateQty, onRemove, onClear, total
     lines.push("");
     lines.push(`Total: ${priceFmt(totals.total, settings.currency)}`);
     lines.push("");
+    lines.push("*POR FAVOR RELLENAR LOS SIGUIENTES DATOS*");
+    lines.push("");
     lines.push("Datos de envío:");
     lines.push("Nombre:");
     lines.push("Dirección:");
