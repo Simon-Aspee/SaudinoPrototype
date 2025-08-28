@@ -123,7 +123,7 @@ function Header({ storeName, onAdminToggle, adminActive, onOpenCart, cartCount }
             onClick={onAdminToggle}
             title="Modo dueño"
           >
-            {adminActive ? "Dueño: ON" : "Modo dueño"}
+            {adminActive ? "Dueño: ON" : ""}
           </button>
           <button
             className="px-3 py-1.5 rounded-lg border text-sm bg-white hover:bg-gray-50"
