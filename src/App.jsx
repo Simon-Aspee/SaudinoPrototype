@@ -46,8 +46,9 @@ const SAMPLE_PRODUCTS = [
     price: 7990,
     description: "Algodón 100% suave. Corta clásica.",
     sizes: ["S", "M", "L", "XL"],
-    imageUrl:
+    images: [
       "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop",
+    ],
     available: true,
     tags: ["básicos", "algodón"],
   },
@@ -57,8 +58,9 @@ const SAMPLE_PRODUCTS = [
     price: 18990,
     description: "Grueso, ideal para invierno.",
     sizes: ["M", "L", "XL"],
-    imageUrl:
+    images: [
       "https://images.unsplash.com/photo-1548883354-7622d03aca29?q=80&w=1200&auto=format&fit=crop",
+    ],
     available: true,
     tags: ["invierno"],
   },
@@ -68,8 +70,9 @@ const SAMPLE_PRODUCTS = [
     price: 24990,
     description: "Tiro medio, calce recto.",
     sizes: ["36", "38", "40", "42"],
-    imageUrl:
+    images: [
       "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop",
+    ],
     available: true,
     tags: ["jeans"],
   },
@@ -142,23 +145,31 @@ function ProductCard({ product, onAdd }) {
   const [size, setSize] = useState(product.sizes?.[0] || "");
   const [qty, setQty] = useState(1);
   const [imgOpen, setImgOpen] = useState(false);
+  const [imgIndex, setImgIndex] = useState(0);
+
+  const images = product.images || (product.imageUrl ? [product.imageUrl] : []);
 
   return (
     <div className="border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition bg-white">
       <div className="aspect-[4/3] bg-gray-100">
-        {product.imageUrl ? (
+        {images?.length ? (
           <>
             <img
-              src={product.imageUrl}
+              src={images[0]}
               alt={product.title}
               className="w-full h-full object-cover cursor-zoom-in"
-              onClick={() => setImgOpen(true)}
+              onClick={() => { setImgIndex(0); setImgOpen(true); }}
             />
             {imgOpen ? (
               <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                 <div className="absolute inset-0 bg-black/70" onClick={() => setImgOpen(false)} />
-                <div className="relative max-w-4xl w-full max-h-[90vh]">
-                  <img src={product.imageUrl} alt="preview large" className="w-full h-full object-contain rounded-lg" />
+                <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center">
+                  <button className="absolute left-2 z-50 p-2 rounded-full bg-white/20 text-white" onClick={() => setImgIndex((i) => (i - 1 + images.length) % images.length)}>◀</button>
+                  <div className="mx-auto w-full max-w-3xl">
+                    <img src={images[imgIndex]} alt={`preview ${imgIndex + 1}`} className="w-full h-full object-contain rounded-lg" />
+                    <div className="text-xs text-white text-center mt-2">{imgIndex + 1} / {images.length}</div>
+                  </div>
+                  <button className="absolute right-2 z-50 p-2 rounded-full bg-white/20 text-white" onClick={() => setImgIndex((i) => (i + 1) % images.length)}>▶</button>
                   <button className="absolute top-2 right-2 px-3 py-1 rounded-lg bg-white/20 text-white" onClick={() => setImgOpen(false)}>Cerrar</button>
                 </div>
               </div>
@@ -407,8 +418,39 @@ function ImagePicker({ value, onChange }) {
   );
 }
 
+function ImagePickerList({ images = [], onChange }) {
+  // images: array of url/base64 strings
+  const updateAt = (idx, v) => {
+    const next = [...images];
+    next[idx] = v;
+    onChange(next.filter(Boolean));
+  };
+  const removeAt = (idx) => { onChange(images.filter((_, i) => i !== idx)); };
+  const addEmpty = () => { if (images.length < 5) onChange([...images, ""]); };
+
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        {Array.from({ length: Math.max(1, images.length) }).map((_, i) => (
+          <div key={i} className="space-y-1">
+            <label className="text-xs">Imagen {i + 1}</label>
+            <ImagePicker value={images[i]} onChange={(v) => updateAt(i, v)} />
+            <div className="flex gap-2">
+              <button className="px-2 py-1 text-sm border rounded-lg" onClick={() => removeAt(i)}>Eliminar</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <button className="px-3 py-2 rounded-lg border text-sm" onClick={addEmpty} disabled={images.length >= 5}>Agregar imagen</button>
+        <div className="text-xs text-gray-500">Máx 5 imágenes. Usa URL públicas para mantener el JSON liviano.</div>
+      </div>
+    </div>
+  );
+}
+
 function AdminPanel({ catalog, setCatalog, settings, setSettings }) {
-  const empty = { id: uid(), title: "", price: 0, description: "", sizes: [], imageUrl: "", available: true, tags: [] };
+  const empty = { id: uid(), title: "", price: 0, description: "", sizes: [], images: [], available: true, tags: [] };
   const [editing, setEditing] = useState(null);
   const [tab, setTab] = useState("productos");
 
@@ -599,7 +641,7 @@ function AdminPanel({ catalog, setCatalog, settings, setSettings }) {
               {catalog.map((p, idx) => (
                 <div key={p.id} className="border rounded-2xl overflow-hidden">
                   <div className="aspect-[4/3] bg-gray-100">
-                    {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-full h-full object-cover" /> : null}
+                    { (p.images?.[0] || p.imageUrl) ? <img src={p.images?.[0] || p.imageUrl} alt="" className="w-full h-full object-cover" /> : null}
                   </div>
                   <div className="p-3">
                     <div className="flex items-start justify-between">
@@ -665,8 +707,8 @@ function ProductForm({ initial, onSave, onCancel }) {
         />
       </div>
       <div className="space-y-1">
-        <label className="text-sm font-medium">Imagen</label>
-        <ImagePicker value={form.imageUrl} onChange={(v) => setForm({ ...form, imageUrl: v })} />
+        <label className="text-sm font-medium">Imágenes</label>
+        <ImagePickerList images={form.images || []} onChange={(imgs) => setForm({ ...form, images: imgs })} />
       </div>
       <div className="flex items-center justify-between mt-2">
         <label className="flex items-center gap-2 text-sm">
@@ -677,7 +719,7 @@ function ProductForm({ initial, onSave, onCancel }) {
           <button className="px-3 py-1.5 rounded-lg border text-sm" onClick={onCancel}>Cancelar</button>
           <button
             className="px-3 py-1.5 rounded-lg bg-black text-white text-sm"
-            onClick={() => onSave({ ...form, id: form.id || uid(), sizes: sizesText.split(",").map((s) => s.trim()).filter(Boolean) })}
+            onClick={() => onSave({ ...form, id: form.id || uid(), sizes: sizesText.split(",").map((s) => s.trim()).filter(Boolean), images: (form.images || []).slice(0,5) })}
             disabled={!form.title || !form.price}
           >
             Guardar
@@ -692,6 +734,7 @@ export default function App() {
   const [settings, setSettings] = useState(() => loadLS(LS_KEYS.settings, DEFAULT_SETTINGS));
   const [catalog, setCatalog] = useState(() => loadLS(LS_KEYS.catalog, SAMPLE_PRODUCTS));
   const [cart, setCart] = useState(() => loadLS(LS_KEYS.cart, []));
+  const [toast, setToast] = useState(null);
 
   const [adminOpen, setAdminOpen] = useState(false);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
@@ -755,12 +798,16 @@ export default function App() {
     const key = `${product.id}_${size || "-"}`;
     setCart((prev) => {
       const ix = prev.findIndex((x) => x.key === key);
-      const item = { key, id: product.id, title: product.title, price: product.price, size, qty, imageUrl: product.imageUrl };
+      const imageUrl = (product.images && product.images[0]) || product.imageUrl || "";
+      const item = { key, id: product.id, title: product.title, price: product.price, size, qty, imageUrl };
       const next = [...prev];
       if (ix >= 0) next[ix] = { ...next[ix], qty: next[ix].qty + qty };
       else next.push(item);
       return next;
     });
+    // show toast
+    setToast("Añadido al carrito");
+    setTimeout(() => setToast(null), 2000);
   }
 
   function updateQty(key, qty) {
@@ -855,6 +902,12 @@ export default function App() {
         totals={totals}
         settings={settings}
       />
+      {/* Toast */}
+      {toast ? (
+        <div className="fixed left-1/2 -translate-x-1/2 bottom-8 z-50">
+          <div className="bg-black text-white px-4 py-2 rounded-full text-sm shadow-lg">{toast}</div>
+        </div>
+      ) : null}
     </div>
   );
 }
