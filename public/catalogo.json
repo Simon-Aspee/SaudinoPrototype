@@ -29,6 +29,40 @@
       "available": true,
       "tags": [
         "básicos"
+      ],
+      "sizeColors": {
+        "XS": [
+          "black",
+          "red"
+        ],
+        "S": [
+          "black",
+          "red"
+        ],
+        "M": [
+          "red",
+          "black"
+        ],
+        "L": [
+          "red",
+          "black"
+        ],
+        "XL": [
+          "red",
+          "black"
+        ]
+      },
+      "colors": [
+        {
+          "id": "black",
+          "label": "Negro",
+          "hex": "#111827"
+        },
+        {
+          "id": "red",
+          "label": "Rojo",
+          "hex": "#ef4444"
+        }
       ]
     }
   ]
