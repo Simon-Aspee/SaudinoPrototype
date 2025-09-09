@@ -888,7 +888,6 @@ export default function App() {
 
       <footer className="py-10 text-center text-xs text-gray-500">
         <div>⚠️ Esta demo no gestiona stock ni pagos. El pedido se envía como mensaje con el detalle del carrito.</div>
-        <div className="mt-1">Para publicar cambios sin backend: Exporta el JSON y súbelo a tu hosting como <code>/catalogo.json</code>.</div>
       </footer>
 
       <AdminGate open={adminOpen} onClose={() => setAdminOpen(false)} onUnlock={unlockAdmin} />
