@@ -103,9 +103,7 @@ const DEFAULT_SETTINGS = {
 const DEFAULT_COLOR_PALETTE = [
   { id: "black", label: "Negro", hex: "#111827" },
   { id: "white", label: "Blanco", hex: "#ffffff" },
-  { id: "red", label: "Rojo", hex: "#ef4444" },
-  { id: "green", label: "Verde", hex: "#10b981" },
-  { id: "gray", label: "Gris", hex: "#6b7280ff" },
+  { id: "red berry", label: "Red Berry", hex: "#910303" },
 ];
 
 // ---------- Storage helpers ----------
