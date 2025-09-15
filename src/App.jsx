@@ -101,9 +101,17 @@ const DEFAULT_SETTINGS = {
 
 // Paleta fija de colores que el dueño puede seleccionar desde la UI (editar aquí en código)
 const DEFAULT_COLOR_PALETTE = [
-  { id: "black", label: "Negro", hex: "#111827" },
+  { id: "black", label: "Negro", hex: "#000000" },
   { id: "white", label: "Blanco", hex: "#ffffff" },
-  { id: "red berry", label: "Red Berry", hex: "#910303" },
+  { id: "red berry", label: "Rojo Berry", hex: "#910303" },
+  { id: "royalblue", label: "Azul Real", hex: "#4169e1" },
+  { id: "chocolate", label: "Chocolate", hex: "#3D120A" },
+  { id: "gray", label: "Gris", hex: "#494949" },
+  { id: "navy blue", label: "Azul Marino", hex: "#050A45" },
+  { id: "silver gray", label: "Gris Plateado", hex: "#C0C1C8" },
+  { id: "olive green", label: "Verde Oliva", hex: "#2A4016" },
+  { id: "forest green", label: "Verde Bosque", hex: "#03400F" },
+  { id: "purple", label: "Morado", hex: "#360542" },
 ];
 
 // ---------- Storage helpers ----------
