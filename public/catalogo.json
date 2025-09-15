@@ -33,33 +33,34 @@
       "sizeColors": {
         "XS": [
           "black",
-          "red"
+          "red",
+          "red berry"
         ],
         "S": [
-          "black"
+          "black",
+          "red",
+          "red berry"
         ],
         "M": [
           "red",
-          "black"
+          "black",
+          "red berry"
         ],
         "L": [
-          "red"
+          "red",
+          "red berry"
         ],
         "XL": [
           "red",
-          "black"
+          "black",
+          "red berry"
         ]
       },
       "colors": [
         {
-          "id": "black",
-          "label": "Negro",
-          "hex": "#111827"
-        },
-        {
-          "id": "red",
-          "label": "Rojo",
-          "hex": "#ef4444"
+          "id": "red berry",
+          "label": "Red Berry",
+          "hex": "#910303"
         }
       ]
     }
