@@ -104,9 +104,8 @@ const DEFAULT_COLOR_PALETTE = [
   { id: "black", label: "Negro", hex: "#111827" },
   { id: "white", label: "Blanco", hex: "#ffffff" },
   { id: "red", label: "Rojo", hex: "#ef4444" },
-  { id: "blue", label: "Azul", hex: "#3b82f6" },
   { id: "green", label: "Verde", hex: "#10b981" },
-  { id: "gray", label: "Gris", hex: "#6b7280" },
+  { id: "gray", label: "Gris", hex: "#6b7280ff" },
 ];
 
 // ---------- Storage helpers ----------
